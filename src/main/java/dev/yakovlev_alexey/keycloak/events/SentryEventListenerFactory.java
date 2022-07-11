@@ -24,7 +24,12 @@ public class SentryEventListenerFactory implements EventListenerProviderFactory 
 
 		Hub hub = new Hub(getOptions(configuration));
 
-		return new SentryEventListener(hub, configuration.getErrorsOnly());
+		SentryEventListener provider = new SentryEventListener(hub, configuration.getErrorsOnly());
+
+		provider.setIgnoredEventTypes(configuration.getIgnoredEventTypes());
+		provider.setIgnoredErrors(configuration.getIgnoredErrors());
+
+		return provider;
 	}
 
 	@Override

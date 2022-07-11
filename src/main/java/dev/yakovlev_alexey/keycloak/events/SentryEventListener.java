@@ -1,7 +1,9 @@
 package dev.yakovlev_alexey.keycloak.events;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.keycloak.events.Event;
 import org.keycloak.events.EventListenerProvider;
@@ -18,9 +20,20 @@ public class SentryEventListener implements EventListenerProvider {
 	private final Hub hub;
 	private final boolean errorsOnly;
 
+	private Set<String> ignoredEventTypes = new HashSet<>();
+	private Set<String> ignoredErrors = new HashSet<>();
+
 	SentryEventListener(Hub hub, boolean errorsOnly) {
 		this.hub = hub;
 		this.errorsOnly = errorsOnly;
+	}
+
+	public void setIgnoredEventTypes(Set<String> ignoredEventTypes) {
+		this.ignoredEventTypes = ignoredEventTypes;
+	}
+
+	public void setIgnoredErrors(Set<String> ignoredErrors) {
+		this.ignoredErrors = ignoredErrors;
 	}
 
 	@Override
@@ -29,7 +42,7 @@ public class SentryEventListener implements EventListenerProvider {
 
 	@Override
 	public void onEvent(Event event) {
-		if (errorsOnly && event.getError() == null) {
+		if (shouldIgnore(event)) {
 			return;
 		}
 
@@ -48,6 +61,10 @@ public class SentryEventListener implements EventListenerProvider {
 
 	@Override
 	public void onEvent(AdminEvent event, boolean includeRepresentation) {
+		if (shouldIgnore(event)) {
+			return;
+		}
+
 		SentryEvent sentryEvent = new SentryEvent();
 
 		sentryEvent.setMessage(getMessage(event));
@@ -60,6 +77,23 @@ public class SentryEventListener implements EventListenerProvider {
 
 		hub.captureEvent(sentryEvent);
 
+	}
+
+	private boolean shouldIgnore(Event event) {
+		if (errorsOnly && event.getError() == null) {
+			return true;
+		}
+
+		return ignoredEventTypes.contains(event.getType().toString()) || ignoredErrors.contains(event.getError());
+	}
+
+	private boolean shouldIgnore(AdminEvent event) {
+		if (errorsOnly && event.getError() == null) {
+			return true;
+		}
+
+		return ignoredEventTypes.contains(event.getOperationType().toString())
+				|| ignoredErrors.contains(event.getError());
 	}
 
 	private Message getMessage(Event event) {

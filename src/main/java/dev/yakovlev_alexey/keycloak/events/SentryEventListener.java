@@ -53,6 +53,7 @@ public class SentryEventListener implements EventListenerProvider {
 		sentryEvent.setUser(getUser(event));
 		sentryEvent.setExtras(getExtras(event));
 
+		sentryEvent.setTag("realm", event.getRealmId());
 		sentryEvent.setTag("type", event.getType().toString());
 		sentryEvent.setTag("source", EventSource.COMMON.toString());
 
@@ -72,6 +73,7 @@ public class SentryEventListener implements EventListenerProvider {
 		sentryEvent.setUser(getUser(event));
 		sentryEvent.setExtras(getExtras(event, includeRepresentation));
 
+		sentryEvent.setTag("realm", event.getRealmId());
 		sentryEvent.setTag("type", event.getOperationType().toString());
 		sentryEvent.setTag("source", EventSource.ADMIN.toString());
 
@@ -79,45 +81,40 @@ public class SentryEventListener implements EventListenerProvider {
 
 	}
 
-	private boolean shouldIgnore(Event event) {
-		if (errorsOnly && event.getError() == null) {
+	private boolean shouldIgnore(String error, String type) {
+		if (errorsOnly && error == null) {
 			return true;
 		}
 
-		return ignoredEventTypes.contains(event.getType().toString()) || ignoredErrors.contains(event.getError());
+		return ignoredEventTypes.contains(type) || ignoredErrors.contains(error);
+	}
+
+	private boolean shouldIgnore(Event event) {
+		return shouldIgnore(event.getError(), event.getType().toString());
 	}
 
 	private boolean shouldIgnore(AdminEvent event) {
-		if (errorsOnly && event.getError() == null) {
-			return true;
+		return shouldIgnore(event.getError(), event.getOperationType().toString());
+	}
+
+	private Message getMessage(String error, String type) {
+		Message message = new Message();
+
+		if (errorsOnly) {
+			message.setMessage(error);
+		} else {
+			message.setMessage(type);
 		}
 
-		return ignoredEventTypes.contains(event.getOperationType().toString())
-				|| ignoredErrors.contains(event.getError());
+		return message;
 	}
 
 	private Message getMessage(Event event) {
-		Message message = new Message();
-
-		if (errorsOnly) {
-			message.setMessage(event.getError());
-		} else {
-			message.setMessage(event.getType().toString());
-		}
-
-		return message;
+		return getMessage(event.getError(), event.getType().toString());
 	}
 
 	private Message getMessage(AdminEvent event) {
-		Message message = new Message();
-
-		if (errorsOnly) {
-			message.setMessage(event.getError());
-		} else {
-			message.setMessage(event.getOperationType().toString());
-		}
-
-		return message;
+		return getMessage(event.getError(), event.getOperationType().toString());
 	}
 
 	private SentryLevel getLevel(String error) {

@@ -81,21 +81,20 @@ public class SentryEventListener implements EventListenerProvider {
 
 	}
 
-	private boolean shouldIgnore(Event event) {
-		if (errorsOnly && event.getError() == null) {
+	private boolean shouldIgnore(String error, String type) {
+		if (errorsOnly && error == null) {
 			return true;
 		}
 
-		return ignoredEventTypes.contains(event.getType().toString()) || ignoredErrors.contains(event.getError());
+		return ignoredEventTypes.contains(type) || ignoredErrors.contains(error);
+	}
+
+	private boolean shouldIgnore(Event event) {
+		return shouldIgnore(event.getError(), event.getType().toString());
 	}
 
 	private boolean shouldIgnore(AdminEvent event) {
-		if (errorsOnly && event.getError() == null) {
-			return true;
-		}
-
-		return ignoredEventTypes.contains(event.getOperationType().toString())
-				|| ignoredErrors.contains(event.getError());
+		return shouldIgnore(event.getError(), event.getOperationType().toString());
 	}
 
 	private Message getMessage(Event event) {

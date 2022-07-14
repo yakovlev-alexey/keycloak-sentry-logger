@@ -97,28 +97,24 @@ public class SentryEventListener implements EventListenerProvider {
 		return shouldIgnore(event.getError(), event.getOperationType().toString());
 	}
 
-	private Message getMessage(Event event) {
+	private Message getMessage(String error, String type) {
 		Message message = new Message();
 
 		if (errorsOnly) {
-			message.setMessage(event.getError());
+			message.setMessage(error);
 		} else {
-			message.setMessage(event.getType().toString());
+			message.setMessage(type);
 		}
 
 		return message;
 	}
 
+	private Message getMessage(Event event) {
+		return getMessage(event.getError(), event.getType().toString());
+	}
+
 	private Message getMessage(AdminEvent event) {
-		Message message = new Message();
-
-		if (errorsOnly) {
-			message.setMessage(event.getError());
-		} else {
-			message.setMessage(event.getOperationType().toString());
-		}
-
-		return message;
+		return getMessage(event.getError(), event.getOperationType().toString());
 	}
 
 	private SentryLevel getLevel(String error) {

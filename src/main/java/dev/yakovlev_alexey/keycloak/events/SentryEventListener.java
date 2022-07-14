@@ -53,6 +53,7 @@ public class SentryEventListener implements EventListenerProvider {
 		sentryEvent.setUser(getUser(event));
 		sentryEvent.setExtras(getExtras(event));
 
+		sentryEvent.setTag("realm", event.getRealmId());
 		sentryEvent.setTag("type", event.getType().toString());
 		sentryEvent.setTag("source", EventSource.COMMON.toString());
 
@@ -72,6 +73,7 @@ public class SentryEventListener implements EventListenerProvider {
 		sentryEvent.setUser(getUser(event));
 		sentryEvent.setExtras(getExtras(event, includeRepresentation));
 
+		sentryEvent.setTag("realm", event.getRealmId());
 		sentryEvent.setTag("type", event.getOperationType().toString());
 		sentryEvent.setTag("source", EventSource.ADMIN.toString());
 

@@ -47,9 +47,7 @@ public class SentryEventListenerFactory implements EventListenerProviderFactory 
 	private SentryOptions getOptions(SentryConfiguration configuration) {
 		SentryOptions options = new SentryOptions();
 
-		options.setDsn(configuration.getDsn());
-		options.setRelease(configuration.getRelease());
-		options.setDebug(configuration.getDebug());
+		options.setEnableExternalConfiguration(true);
 
 		return options;
 	}

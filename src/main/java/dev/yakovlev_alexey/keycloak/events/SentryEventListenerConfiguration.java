@@ -1,17 +1,20 @@
-package dev.yakovlev_alexey.keycloak.sentry;
+package dev.yakovlev_alexey.keycloak.events;
 
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class EnvSentryConfiguration implements SentryConfiguration {
+import dev.yakovlev_alexey.keycloak.sentry.Constants;
+import dev.yakovlev_alexey.keycloak.sentry.SentryConfiguration;
+
+public class SentryEventListenerConfiguration implements SentryConfiguration {
 	private boolean isErrorsOnly;
 
 	private Set<String> ignoredEventTypes;
 	private Set<String> ignoredErrors;
 
-	public EnvSentryConfiguration() {
+	public SentryEventListenerConfiguration() {
 		this.isErrorsOnly = Boolean.parseBoolean(System.getenv(Constants.SENTRY_ERRORS_ONLY));
 
 		String ignoredEventTypes = Optional.ofNullable(System.getenv(Constants.SENTRY_IGNORED_EVENT_TYPES)).orElse("");

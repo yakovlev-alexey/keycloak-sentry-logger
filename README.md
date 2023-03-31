@@ -10,23 +10,14 @@ Use the latest prebuilt `jar` file from the releases tab on GitHub or build the 
 
 First you need to set required environment variables for this plugin. At the moment of writing Keycloak would not allow custom event listeners to be configured. So the only source of configuration is the environment.
 
-Following environment variables _must_ be set:
+The package can be configured with the following environment variables:
 
 ```
-SENTRY_DSN=<your Sentry DSN>
-SENTRY_ERRORS_ONLY=true
-```
-
-> `SENTRY_ERRORS_ONLY` may not be set however I strongly recommend to only log errors since Keycloak produces a lot of generic events you will likely have no use for. Set to false only when you know you are going to need generic events in your sentry logs.
-
-Following environment variables _can_ be set:
-
-```
-SENTRY_RELEASE=<release to be sent in events>
-SENTRY_DEBUG=<run Sentry SDK in debug mode>
+SENTRY_ERRORS_ONLY=<boolean strongly recommended to only log errors since Keycloak produces a lot of generic events you will likely have no use for. Set to false only when you know you are going to need generic events in your sentry logs>
 SENTRY_IGNORED_EVENT_TYPES=<';' separated list of event types (commonly upper snakecase) to be ignored>
 SENTRY_IGNORED_ERRORS=<';' separated list of error message (commonly lower snakecase) to be ignored>
 ```
+Also, Sentry can be configured with its [standard environment variables](https://docs.sentry.io/platforms/java/configuration/), like `SENTRY_DSN`, `SENTRY_DEBUG`, `SENTRY_RELEASE` etc.
 
 An example configuration might look like this:
 

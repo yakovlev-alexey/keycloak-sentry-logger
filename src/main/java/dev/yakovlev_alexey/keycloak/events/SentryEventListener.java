@@ -10,30 +10,25 @@ import org.keycloak.events.EventListenerProvider;
 import org.keycloak.events.admin.AdminEvent;
 
 import dev.yakovlev_alexey.keycloak.sentry.EventSource;
-import io.sentry.Hub;
+import dev.yakovlev_alexey.keycloak.sentry.SentryConfiguration;
+import io.sentry.IHub;
 import io.sentry.SentryEvent;
 import io.sentry.SentryLevel;
 import io.sentry.protocol.Message;
 import io.sentry.protocol.User;
 
 public class SentryEventListener implements EventListenerProvider {
-	private final Hub hub;
+	private final IHub hub;
 	private final boolean errorsOnly;
 
 	private Set<String> ignoredEventTypes = new HashSet<>();
 	private Set<String> ignoredErrors = new HashSet<>();
 
-	SentryEventListener(Hub hub, boolean errorsOnly) {
+	SentryEventListener(IHub hub, SentryConfiguration configuration) {
 		this.hub = hub;
-		this.errorsOnly = errorsOnly;
-	}
-
-	public void setIgnoredEventTypes(Set<String> ignoredEventTypes) {
-		this.ignoredEventTypes = ignoredEventTypes;
-	}
-
-	public void setIgnoredErrors(Set<String> ignoredErrors) {
-		this.ignoredErrors = ignoredErrors;
+		this.errorsOnly = configuration.getErrorsOnly();
+		this.ignoredEventTypes = configuration.getIgnoredEventTypes();
+		this.ignoredErrors = configuration.getIgnoredErrors();
 	}
 
 	@Override

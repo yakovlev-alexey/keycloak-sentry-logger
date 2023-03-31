@@ -7,9 +7,8 @@ import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.KeycloakSessionFactory;
 
 import dev.yakovlev_alexey.keycloak.sentry.SentryConfiguration;
-import io.sentry.Hub;
-import io.sentry.SentryOptions;
-import dev.yakovlev_alexey.keycloak.sentry.EnvSentryConfiguration;
+import io.sentry.IHub;
+import io.sentry.Sentry;
 
 public class SentryEventListenerFactory implements EventListenerProviderFactory {
 
@@ -20,16 +19,12 @@ public class SentryEventListenerFactory implements EventListenerProviderFactory 
 
 	@Override
 	public EventListenerProvider create(KeycloakSession session) {
-		SentryConfiguration configuration = new EnvSentryConfiguration();
+		Sentry.init();
 
-		Hub hub = new Hub(getOptions(configuration));
+		SentryConfiguration configuration = new SentryEventListenerConfiguration();
+		IHub hub = Sentry.getCurrentHub();
 
-		SentryEventListener provider = new SentryEventListener(hub, configuration.getErrorsOnly());
-
-		provider.setIgnoredEventTypes(configuration.getIgnoredEventTypes());
-		provider.setIgnoredErrors(configuration.getIgnoredErrors());
-
-		return provider;
+		return new SentryEventListener(hub, configuration);
 	}
 
 	@Override
@@ -43,15 +38,4 @@ public class SentryEventListenerFactory implements EventListenerProviderFactory 
 	@Override
 	public void close() {
 	}
-
-	private SentryOptions getOptions(SentryConfiguration configuration) {
-		SentryOptions options = new SentryOptions();
-
-		options.setDsn(configuration.getDsn());
-		options.setRelease(configuration.getRelease());
-		options.setDebug(configuration.getDebug());
-
-		return options;
-	}
-
 }

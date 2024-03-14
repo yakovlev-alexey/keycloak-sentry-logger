@@ -53,7 +53,7 @@
 	</dependencyManagement>
 
 	<build>
-		<finalName>${project.groupId}-${project.artifactId}-${project.version}</finalName>
+		<finalName>keycloak-sentry-logger</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

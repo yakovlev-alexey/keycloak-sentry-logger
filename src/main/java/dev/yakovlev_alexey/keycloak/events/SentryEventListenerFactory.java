@@ -19,7 +19,10 @@ public class SentryEventListenerFactory implements EventListenerProviderFactory 
 
 	@Override
 	public EventListenerProvider create(KeycloakSession session) {
-		Sentry.init(o -> o.setEnableUncaughtExceptionHandler(false));
+		Sentry.init(o -> {
+			o.setEnableExternalConfiguration(true);
+			o.setEnableUncaughtExceptionHandler(false);
+		});
 
 		SentryConfiguration configuration = new SentryEventListenerConfiguration();
 		IHub hub = Sentry.getCurrentHub();

@@ -1,7 +1,6 @@
 package dev.yakovlev_alexey.keycloak.events;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,8 +20,8 @@ public class SentryEventListener implements EventListenerProvider {
 	private final IHub hub;
 	private final boolean errorsOnly;
 
-	private Set<String> ignoredEventTypes = new HashSet<>();
-	private Set<String> ignoredErrors = new HashSet<>();
+	private final Set<String> ignoredEventTypes;
+	private final Set<String> ignoredErrors;
 
 	SentryEventListener(IHub hub, SentryConfiguration configuration) {
 		this.hub = hub;
@@ -145,7 +144,10 @@ public class SentryEventListener implements EventListenerProvider {
 
 	private Map<String, Object> getExtras(Event event) {
 		HashMap<String, Object> extras = new HashMap<>();
-		extras.putAll(event.getDetails());
+
+		if (event.getDetails() != null) {
+			extras.putAll(event.getDetails());
+		}
 
 		extras.put("realmId", event.getRealmId());
 		extras.put("clientId", event.getClientId());

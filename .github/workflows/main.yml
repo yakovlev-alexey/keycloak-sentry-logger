@@ -20,7 +20,7 @@ jobs:
 
       - name: Tag package
         if: startsWith(github.ref, 'refs/tags/')
-        run: cp ./target/dev.yakovlev_alexey-keycloak-sentry-logger-1.0-SNAPSHOT.jar ./dev.yakovlev_alexey-keycloak-sentry-logger-$GITHUB_REF_NAME.jar
+        run: cp ./target/keycloak-sentry-logger.jar ./dev.yakovlev_alexey-keycloak-sentry-logger-$GITHUB_REF_NAME.jar
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
